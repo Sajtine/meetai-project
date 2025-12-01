@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { OctagonAlertIcon } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod"
+import { FaGoogle, FaGithub } from "react-icons/fa";
 
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client"
@@ -58,11 +59,33 @@ export const SignUpView = () => {
                 name: data.name,
                 email: data.email,
                 password: data.password,
+                callbackURL: "/"
             },
             {
                 onSuccess: () => {
                     setPending(false);
-                    router.push("/sign-in");
+                    router.push("/")
+                },
+                onError: ({ error }) => {
+                    setPending(false);
+                    setError(error.message)
+                }
+            }
+        )
+    }
+
+    const onSocial = (provider: "github" | "google") => {
+        setError(null);
+        setPending(true);
+        
+        authClient.signIn.social(
+            {
+                provider: provider,
+                callbackURL: "/"
+            },
+            {
+                onSuccess: () => {
+                    setPending(false);
                 },
                 onError: ({ error }) => {
                     setPending(false);
@@ -199,16 +222,21 @@ export const SignUpView = () => {
                                     type="button"
                                     className="w-full"
                                     >
-                                        Google
+                                        <FaGoogle />
                                     </Button>
 
                                     <Button
                                     disabled={pending}
+                                    onClick={() => {
+                                        authClient.signIn.social({
+                                            provider: "github",
+                                        })
+                                    }}
                                     variant="outline"
                                     type="button"
                                     className="w-full"
                                     >
-                                        Github
+                                        <FaGithub />
                                     </Button>
                                 </div>
                                 <div className="text-center text-sm">
