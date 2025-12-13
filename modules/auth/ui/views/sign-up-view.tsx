@@ -218,6 +218,7 @@ export const SignUpView = () => {
                                 <div className="grid grid-cols-2 gap-4">
                                     <Button
                                     disabled={pending}
+                                    onClick={() => onSocial("google")}
                                     variant="outline"
                                     type="button"
                                     className="w-full"
@@ -227,11 +228,7 @@ export const SignUpView = () => {
 
                                     <Button
                                     disabled={pending}
-                                    onClick={() => {
-                                        authClient.signIn.social({
-                                            provider: "github",
-                                        })
-                                    }}
+                                    onClick={() => onSocial("github")}
                                     variant="outline"
                                     type="button"
                                     className="w-full"
