@@ -25,18 +25,21 @@ export const agentsRouter = createTRPCRouter({
         .update(agents)
         .set(input)
         .where(
-          and(eq(agents.id, input.id), eq(agents.userId, ctx.auth.user.id))
+          and(
+            eq(agents.id, input.id),
+            eq(agents.userId, ctx.auth.user.id),
+          )
         )
-        .returning();
+        .returning()
 
-      if (!updatedAgent) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Agent not found",
-        });
-      }
+        if (!updatedAgent) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Agent not found"
+          });
+        }
 
-      return updatedAgent;
+        return updatedAgent; 
     }),
 
   remove: protectedProcedure
@@ -45,21 +48,24 @@ export const agentsRouter = createTRPCRouter({
       const [removeAgent] = await db
         .delete(agents)
         .where(
-          and(eq(agents.id, input.id), eq(agents.userId, ctx.auth.user.id))
+          and(
+            eq(agents.id, input.id),
+            eq(agents.userId, ctx.auth.user.id),
+          ),
         )
 
         .returning();
 
-      if (!removeAgent) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Agent not found",
-        });
-      }
+        if (!removeAgent) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Agent not found"
+          });
+        }
 
-      return removeAgent;
+        return removeAgent;
     }),
-
+    
   getOne: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ input, ctx }) => {
@@ -71,12 +77,15 @@ export const agentsRouter = createTRPCRouter({
         })
         .from(agents)
         .where(
-          and(eq(agents.id, input.id), eq(agents.userId, ctx.auth.user.id))
+          and(
+            eq(agents.id, input.id),
+            eq(agents.userId, ctx.auth.user.id),
+          )
         );
 
-      if (!existingAgent) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "Agent not found" });
-      }
+        if (!existingAgent) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Agent not found"})
+        }
 
       // await new Promise((resolve) => setTimeout(resolve, 5000));
       // throw new TRPCError({ code: "BAD_REQUEST" });
@@ -117,16 +126,17 @@ export const agentsRouter = createTRPCRouter({
         .offset((page - 1) * pageSize);
 
       const [total] = await db
-        .select({ count: count() })
-        .from(agents)
-        .where(
-          and(
+      .select({ count: count() })
+      .from(agents)
+      .where(
+        and(
             eq(agents.userId, ctx.auth.user.id),
             search ? ilike(agents.name, `%${search}%`) : undefined
-          )
-        );
+        )
+      )
 
       const totalPages = Math.ceil(total.count / pageSize);
+      
 
       // await new Promise((resolve) => setTimeout(resolve, 5000));
       // throw new TRPCError({ code: "BAD_REQUEST" });
@@ -134,8 +144,8 @@ export const agentsRouter = createTRPCRouter({
       return {
         items: data,
         total: total.count,
-        totalPages,
-      };
+        totalPages
+      }
     }),
   create: protectedProcedure
     .input(agentsInsertSchema)
