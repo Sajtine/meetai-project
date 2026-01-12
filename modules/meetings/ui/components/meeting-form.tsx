@@ -10,7 +10,7 @@ import { meetingsInsertSchema } from "../../schema";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-import { CommandSelect } from "@/modules/agents/ui/components/command-select";
+import { CommandSelect } from "@/components/command-select";
 import { GenerateAvatar } from "@/components/generated-avatar";
 
 import {
